@@ -1,0 +1,152 @@
+[gd_scene load_steps=22 format=3 uid="uid://bvllt0yj556iw"]
+
+[ext_resource type="Script" path="res://Scenes/Game/deathmatch_game_mode.gd" id="1_8l8ty"]
+[ext_resource type="PackedScene" uid="uid://006mb461a15" path="res://Util/logger.tscn" id="1_noxtc"]
+[ext_resource type="PackedScene" uid="uid://bbhfh8s704eiq" path="res://Scenes/Game/scoreboard.tscn" id="3_lhld5"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_7wp0t"]
+properties/0/path = NodePath(".:player_info")
+properties/0/spawn = true
+properties/0/sync = true
+properties/0/watch = false
+
+[sub_resource type="Animation" id="Animation_thch7"]
+resource_name = "GameAboutToStart"
+length = 5.0
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"_before_game_start"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_pklto"]
+resource_name = "GameInProgress"
+length = 300.0
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"_start_game"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_mbvbs"]
+resource_name = "GameOver"
+length = 10.0
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 10),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [],
+"method": &"_end_game_message"
+}, {
+"args": [],
+"method": &"_end_game"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_pgiuc"]
+resource_name = "WaitingForPlayers"
+loop_mode = 1
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_8n2rn"]
+_data = {
+"GameAboutToStart": SubResource("Animation_thch7"),
+"GameInProgress": SubResource("Animation_pklto"),
+"GameOver": SubResource("Animation_mbvbs"),
+"WaitingForPlayers": SubResource("Animation_pgiuc")
+}
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_03yfl"]
+animation = &"GameAboutToStart"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ccdqa"]
+animation = &"GameInProgress"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_owtqu"]
+animation = &"GameOver"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_tn3mg"]
+animation = &"WaitingForPlayers"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_fsy7q"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_fctbf"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_f1tb0"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_eq3kh"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_3h2p2"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_mfdmk"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_gt71q"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_rsiux"]
+states/End/position = Vector2(864, 100)
+states/GameAboutToStart/node = SubResource("AnimationNodeAnimation_03yfl")
+states/GameAboutToStart/position = Vector2(591, -6)
+states/GameInProgress/node = SubResource("AnimationNodeAnimation_ccdqa")
+states/GameInProgress/position = Vector2(591, 100)
+states/GameOver/node = SubResource("AnimationNodeAnimation_owtqu")
+states/GameOver/position = Vector2(591, 210)
+states/WaitingForPlayers/node = SubResource("AnimationNodeAnimation_tn3mg")
+states/WaitingForPlayers/position = Vector2(373, 100)
+transitions = ["WaitingForPlayers", "GameAboutToStart", SubResource("AnimationNodeStateMachineTransition_fsy7q"), "GameAboutToStart", "GameInProgress", SubResource("AnimationNodeStateMachineTransition_fctbf"), "GameInProgress", "GameOver", SubResource("AnimationNodeStateMachineTransition_f1tb0"), "GameOver", "End", SubResource("AnimationNodeStateMachineTransition_eq3kh"), "GameAboutToStart", "WaitingForPlayers", SubResource("AnimationNodeStateMachineTransition_3h2p2"), "GameInProgress", "WaitingForPlayers", SubResource("AnimationNodeStateMachineTransition_mfdmk"), "Start", "WaitingForPlayers", SubResource("AnimationNodeStateMachineTransition_gt71q")]
+graph_offset = Vector2(-13, -59)
+
+[node name="DeathmatchGameMode" type="Node"]
+script = ExtResource("1_8l8ty")
+
+[node name="Scoreboard" parent="." instance=ExtResource("3_lhld5")]
+unique_name_in_owner = true
+
+[node name="Logger" parent="." instance=ExtResource("1_noxtc")]
+unique_name_in_owner = true
+label = "Deathmatch"
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+unique_name_in_owner = true
+replication_config = SubResource("SceneReplicationConfig_7wp0t")
+public_visibility = false
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_8n2rn")
+}
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+unique_name_in_owner = true
+tree_root = SubResource("AnimationNodeStateMachine_rsiux")
+anim_player = NodePath("../AnimationPlayer")
+active = true

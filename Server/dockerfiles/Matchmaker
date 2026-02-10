@@ -1,0 +1,28 @@
+FROM --platform=linux/amd64 golang:1.19 as builder
+
+WORKDIR /app
+
+ADD ./Server/matchmaker/* .
+
+RUN go build .
+
+
+FROM --platform=linux/amd64 ubuntu
+
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    curl \
+    jq
+
+RUN pip3 install awscli
+
+WORKDIR /app
+
+ADD ./Server/scripts/start-matchmaker-ecs.sh ./
+
+COPY --from=builder /app/matchmaker .
+
+EXPOSE 80/udp
+
+CMD /bin/sh start-matchmaker-ecs.sh

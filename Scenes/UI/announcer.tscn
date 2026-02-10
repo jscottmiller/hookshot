@@ -1,0 +1,636 @@
+[gd_scene load_steps=32 format=3 uid="uid://bld1ka3hplunx"]
+
+[ext_resource type="FontFile" uid="uid://crst2hvsatqg3" path="res://Graphics/Fonts/Aviano Future Black Fast.otf" id="1_1mjss"]
+[ext_resource type="Script" path="res://Scenes/UI/announcer.gd" id="1_57ltc"]
+[ext_resource type="AudioStream" uid="uid://3jpge2sjjkkm" path="res://Sounds/Announcements/kill.ogg" id="3_foghq"]
+[ext_resource type="AudioStream" uid="uid://dg32kbsv6plor" path="res://Sounds/Announcements/death.ogg" id="4_plj1e"]
+[ext_resource type="AudioStream" uid="uid://etsrbenocwsl" path="res://Sounds/Announcements/round_lost.ogg" id="5_d6gtj"]
+[ext_resource type="AudioStream" uid="uid://cdichjxcwvit" path="res://Sounds/Announcements/round_won.ogg" id="6_av5o5"]
+[ext_resource type="AudioStream" uid="uid://tb5t6etr2kxb" path="res://Sounds/Announcements/duel lost.ogg" id="7_jmscg"]
+[ext_resource type="AudioStream" uid="uid://bax8tvar4rs3w" path="res://Sounds/Announcements/round_draw.ogg" id="7_v74rk"]
+[ext_resource type="AudioStream" uid="uid://de6qrcf3ljr1w" path="res://Sounds/Announcements/duel won.ogg" id="8_2v2en"]
+[ext_resource type="AudioStream" uid="uid://stgjbq8mihd4" path="res://Sounds/Announcements/prepare.ogg" id="9_wlp2t"]
+[ext_resource type="AudioStream" uid="uid://b7r8yfu5ad0te" path="res://Sounds/Announcements/begin.ogg" id="10_1o6ab"]
+[ext_resource type="AudioStream" uid="uid://wubtyf07fd8s" path="res://Sounds/Announcements/intro_1.ogg" id="12_73enc"]
+[ext_resource type="AudioStream" uid="uid://cb2kuq3xem2n8" path="res://Sounds/Announcements/intro_2.ogg" id="13_j1c45"]
+[ext_resource type="AudioStream" uid="uid://d0443qji0yvlf" path="res://Sounds/Announcements/game_over.ogg" id="14_kts3d"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_h48w0"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_o7ssi"]
+
+[sub_resource type="Theme" id="Theme_d0x6y"]
+Label/colors/font_color = Color(0.501961, 0, 0.133333, 1)
+Label/colors/font_outline_color = Color(0.0745098, 0.0352941, 0.00784314, 1)
+Label/constants/outline_size = 20
+Label/font_sizes/font_size = 96
+Label/fonts/font = ExtResource("1_1mjss")
+Label/styles/normal = SubResource("StyleBoxEmpty_h48w0")
+Panel/styles/panel = SubResource("StyleBoxEmpty_o7ssi")
+
+[sub_resource type="Animation" id="Animation_4epkt"]
+length = 1.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MessageLabel:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_i61rx"]
+resource_name = "announcement"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MessageLabel:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+
+[sub_resource type="Animation" id="Animation_rjvxd"]
+resource_name = "begin"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MessageLabel:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MessageLabel:text")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["BEGIN"]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Sounds/BeginSound")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_1t0q6"]
+resource_name = "death"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MessageLabel:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sounds/DeathSound")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MessageLabel:text")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["DEATH"]
+}
+
+[sub_resource type="Animation" id="Animation_jkt2c"]
+resource_name = "duel intro"
+length = 5.0
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sounds/Intro1Sound")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(1),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sounds/Intro2Sound")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(3),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MessageLabel:text")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["RULES"]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("MessageLabel:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+
+[sub_resource type="Animation" id="Animation_4gv0p"]
+resource_name = "duel lost"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MessageLabel:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sounds/DuelLostSound")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MessageLabel:text")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["DUEL LOST"]
+}
+
+[sub_resource type="Animation" id="Animation_r277d"]
+resource_name = "duel won"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MessageLabel:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MessageLabel:text")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["DUEL WON"]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Sounds/DuelWonSound")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_kc0f3"]
+resource_name = "game over"
+length = 3.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MessageLabel:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 2.9),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MessageLabel:text")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["GAME OVER"]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Sounds/GameOverSound")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_vlf4u"]
+resource_name = "kill"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MessageLabel:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sounds/KillSound")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MessageLabel:text")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["KILL"]
+}
+
+[sub_resource type="Animation" id="Animation_30nnl"]
+resource_name = "prepare"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MessageLabel:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MessageLabel:text")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["PREPARE"]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Sounds/PrepareSound")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_mu4a2"]
+resource_name = "round draw"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MessageLabel:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sounds/RoundDrawSound")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MessageLabel:text")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["ROUND DRAW"]
+}
+
+[sub_resource type="Animation" id="Animation_vmaqr"]
+resource_name = "round lost"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MessageLabel:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sounds/RoundLostSound")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MessageLabel:text")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["ROUND LOST"]
+}
+
+[sub_resource type="Animation" id="Animation_k5uet"]
+resource_name = "round won"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MessageLabel:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sounds/RoundWonSound")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MessageLabel:text")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["ROUND WON"]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ahtls"]
+_data = {
+"RESET": SubResource("Animation_4epkt"),
+"announcement": SubResource("Animation_i61rx"),
+"begin": SubResource("Animation_rjvxd"),
+"death": SubResource("Animation_1t0q6"),
+"duel intro": SubResource("Animation_jkt2c"),
+"duel lost": SubResource("Animation_4gv0p"),
+"duel won": SubResource("Animation_r277d"),
+"game over": SubResource("Animation_kc0f3"),
+"kill": SubResource("Animation_vlf4u"),
+"prepare": SubResource("Animation_30nnl"),
+"round draw": SubResource("Animation_mu4a2"),
+"round lost": SubResource("Animation_vmaqr"),
+"round won": SubResource("Animation_k5uet")
+}
+
+[node name="Announcer" type="Panel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = SubResource("Theme_d0x6y")
+script = ExtResource("1_57ltc")
+
+[node name="MessageLabel" type="Label" parent="."]
+unique_name_in_owner = true
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -193.5
+offset_top = 207.0
+offset_right = 193.5
+offset_bottom = 326.0
+grow_horizontal = 2
+text = "GAME OVER"
+
+[node name="CountdownTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+unique_name_in_owner = true
+libraries = {
+"": SubResource("AnimationLibrary_ahtls")
+}
+
+[node name="Sounds" type="Node" parent="."]
+
+[node name="KillSound" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource("3_foghq")
+volume_db = 5.0
+
+[node name="DeathSound" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource("4_plj1e")
+volume_db = 5.0
+
+[node name="RoundLostSound" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource("5_d6gtj")
+volume_db = 5.0
+
+[node name="RoundWonSound" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource("6_av5o5")
+volume_db = 5.0
+
+[node name="RoundDrawSound" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource("7_v74rk")
+volume_db = 5.0
+
+[node name="DuelLostSound" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource("7_jmscg")
+volume_db = 5.0
+
+[node name="DuelWonSound" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource("8_2v2en")
+volume_db = 5.0
+
+[node name="PrepareSound" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource("9_wlp2t")
+volume_db = 5.0
+
+[node name="BeginSound" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource("10_1o6ab")
+volume_db = 5.0
+
+[node name="Intro1Sound" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource("12_73enc")
+volume_db = 5.0
+
+[node name="Intro2Sound" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource("13_j1c45")
+volume_db = 5.0
+
+[node name="GameOverSound" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource("14_kts3d")
+volume_db = 5.0
+
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]

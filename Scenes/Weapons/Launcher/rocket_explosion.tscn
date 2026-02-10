@@ -1,0 +1,92 @@
+[gd_scene load_steps=9 format=3 uid="uid://crmtldit11da2"]
+
+[ext_resource type="Script" path="res://Scenes/Weapons/Launcher/rocket_explosion.gd" id="1_aexpv"]
+[ext_resource type="AudioStream" uid="uid://dyuqq40lrgx80" path="res://Scenes/Weapons/Launcher/Sounds/Rocket explode.wav" id="2_l01km"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_eosy4"]
+emission_enabled = true
+emission = Color(0.901961, 0.92549, 0.533333, 1)
+emission_energy_multiplier = 2.5
+
+[sub_resource type="SphereMesh" id="SphereMesh_syu1i"]
+material = SubResource("StandardMaterial3D_eosy4")
+radius = 5.0
+height = 10.0
+radial_segments = 32
+rings = 16
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_c3yuu"]
+radius = 8.0
+
+[sub_resource type="Animation" id="Animation_2gtgy"]
+resource_name = "Disable Collision"
+length = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CollisionShape3D:disabled")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+
+[sub_resource type="Animation" id="Animation_5eg7l"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CollisionShape3D:disabled")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_p1yyk"]
+_data = {
+"Disable Collision": SubResource("Animation_2gtgy"),
+"RESET": SubResource("Animation_5eg7l")
+}
+
+[node name="RocketExplosion" type="Area3D"]
+collision_layer = 32
+collision_mask = 65
+script = ExtResource("1_aexpv")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+cast_shadow = 0
+mesh = SubResource("SphereMesh_syu1i")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_c3yuu")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_p1yyk")
+}
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("2_l01km")
+autoplay = true
+bus = &"InWorldSound"
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+light_color = Color(0.8, 0.713726, 0.494118, 1)
+light_energy = 10.0
+shadow_enabled = true
+omni_range = 15.0
+
+[node name="LifetimeTimer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
+autostart = true
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="timeout" from="LifetimeTimer" to="." method="_on_lifetime_timer_timeout"]

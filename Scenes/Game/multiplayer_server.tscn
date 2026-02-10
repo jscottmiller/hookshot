@@ -1,0 +1,554 @@
+[gd_scene load_steps=6 format=3 uid="uid://l445esydvxs4"]
+
+[ext_resource type="PackedScene" uid="uid://006mb461a15" path="res://Util/logger.tscn" id="3_jnv3a"]
+[ext_resource type="PackedScene" uid="uid://bld1ka3hplunx" path="res://Scenes/UI/announcer.tscn" id="4_5rako"]
+[ext_resource type="PackedScene" uid="uid://dqyyyulekt45c" path="res://Scenes/Game/chat_panel.tscn" id="4_u15rf"]
+[ext_resource type="AudioStream" uid="uid://c61jke0jnayl3" path="res://Music/145217130-energy-cyberpunk-loop.wav" id="5_s6e70"]
+
+[sub_resource type="GDScript" id="GDScript_baplv"]
+script/source = "class_name MultiplayerMatch extends Node
+
+@onready var logger := %Logger as Logger
+@onready var players := %Players
+@onready var level_container := %LevelContainer
+@onready var game_mode_container := %GameModeContainer
+@onready var chat_panel := %ChatPanel as ChatPanel
+@onready var announcer := %Announcer as Announcer
+@onready var matchmaker_ping_timer := %MatchmakerPingTimer as Timer
+
+const PORT = 9998
+
+enum Role {
+	CLIENT,
+	SERVER
+}
+
+var role: Role
+var current_level_path := \"res://Scenes/Levels/test_level.tscn\"
+var current_level: Variant
+var current_game_mode: Variant
+var local_player: Player
+var connected_clients := {}
+var input_player_name := \"anonymous\"
+var recent_chat_messages := []
+var websocket_client: WebSocketPeer
+var websocket_initialized := false
+
+
+class ConnectedClient:
+	var player: Player
+	var name := \"anonymous\"
+	var level_loaded := false
+
+
+class ChatMessage:
+	var sender: int
+	var timestamp: float
+	var message: String
+	
+	func _init(sender: int, timestamp: float, message: String) -> void:
+		self.sender = sender
+		self.timestamp = timestamp
+		self.message = message
+
+
+func _ready() -> void:
+	if not OS.is_debug_build():
+		$Menu/HostButton.hide()
+		get_tree().root.mode = Window.MODE_FULLSCREEN
+	
+	if OS.get_cmdline_args().find(\"--server\") >= 0:
+		_start_server()
+
+
+func _input(event: InputEvent) -> void:
+	var key_event := event as InputEventKey
+	if key_event and key_event.physical_keycode == KEY_ENTER and $Menu/TextEdit.has_focus():
+		_on_join_button_pressed()
+
+
+func _process(delta: float) -> void:
+	_handle_websocket_connection()
+
+
+func _on_host_button_pressed():
+	$Menu.hide()
+	_start_server()
+
+
+func _on_join_button_pressed():
+	role = Role.CLIENT
+	
+	$Menu.hide()
+	chat_panel.enable()
+	#_join_server()
+	
+	websocket_client = WebSocketPeer.new()
+	websocket_client.connect_to_url(\"wss://hookshot-matchmaker.fly.dev/client\")
+
+
+func _on_text_edit_text_changed():
+	input_player_name = $Menu/TextEdit.text
+
+
+func _on_chat_panel_chat_message(message: String) -> void:
+	rpc_id(get_multiplayer_authority(), \"store_chat_message\", message)
+
+
+func _on_chat_panel_chat_focus_changed(has_focus: bool) -> void:
+	if not local_player:
+		return
+	if has_focus:
+		local_player.disable_inputs()
+	else:
+		local_player.enable_inputs()
+
+
+func _on_game_mode_request_respawn(player_id: int) -> void:
+	if not is_multiplayer_authority():
+		return
+	
+	logger.trace(\"respawning player {0}\", [player_id])
+	var spawn_point := current_level.choose_spawn_point() as Vector3
+	
+	rpc_id(player_id, \"respawn_player\", player_id, spawn_point)
+
+
+func _on_game_mode_game_over() -> void:
+	if not is_multiplayer_authority():
+		return
+	
+	remove_all_player_characters()
+	load_level(current_level_path)
+	
+	rpc(\"remove_all_player_characters\")
+	rpc(\"load_level\", current_level_path)
+
+
+func _on_game_mode_enable_player_weapons(enabled: bool) -> void:
+	logger.trace(\"game mode requests weapons enabled = {0}\", [enabled])
+	rpc(\"enable_local_weapons\", enabled)
+
+
+func _on_game_mode_announce(announcement: Announcer.Announcement, recipients: Array) -> void:
+	for recipient in recipients:
+		rpc_id(recipient, \"announce\", announcement)
+
+
+func _on_matchmaker_ping_timer_timeout() -> void:
+	if websocket_client:
+		websocket_client.send_text(JSON.stringify({
+			\"message_type\": \"ping\"
+		}))
+
+
+@rpc
+func enable_local_weapons(enabled: bool) -> void:
+	logger.trace(\"setting player weapons enabled = {0}\", [enabled])
+	if local_player:
+		local_player.set_weapons_enabled(enabled)
+
+
+func player_died(player_id: int, aggressor_id: int) -> void:
+	if multiplayer.get_unique_id() != player_id:
+		return
+	
+	rpc(\"report_player_death\", player_id, aggressor_id)
+
+
+func _handle_websocket_connection():
+	if websocket_client == null:
+		return
+	
+	websocket_client.poll()
+	
+	var state = websocket_client.get_ready_state()
+	match state:
+		WebSocketPeer.STATE_OPEN:
+			if not websocket_initialized:
+				_websocket_ready()
+				websocket_initialized = true
+			while websocket_client.get_available_packet_count():
+				var data := websocket_client.get_packet()
+				var message := JSON.parse_string(data.get_string_from_utf8()) as Dictionary
+				_on_websocket_message(message)
+				
+		WebSocketPeer.STATE_CLOSED:
+			var code := websocket_client.get_close_code()
+			var reason := websocket_client.get_close_reason()
+			print(\"WebSocket closed with code: %d, reason %s. Clean: %s\" % [code, reason, code != -1])
+			matchmaker_ping_timer.stop()
+			websocket_initialized = false
+			websocket_client = null
+
+
+func _websocket_ready():
+	matchmaker_ping_timer.start()
+	if role == Role.SERVER:
+		websocket_client.send_text(JSON.stringify({
+			\"message_type\": \"register\",
+			\"ip\": \"127.0.0.1\",
+			\"port\": 9999,
+			\"capacity\": 2
+		}))
+	else:
+		websocket_client.send_text(JSON.stringify({
+			\"message_type\": \"request-match\",
+		}))
+
+
+func _on_websocket_message(message: Dictionary) -> void:
+	print(message)
+
+
+func _start_server() -> void:
+	role = Role.SERVER
+	
+	var peer := ENetMultiplayerPeer.new()
+	var server_address := (
+		OS.get_environment(\"SERVER_ADDRESS\") 
+		if OS.has_environment(\"SERVER_ADDRESS\")
+		else \"127.0.0.1\"
+	)
+	var server_port := (
+		OS.get_environment(\"SERVER_PORT\").to_int()
+		if OS.has_environment(\"SERVER_PORT\")
+		else PORT
+	)
+	
+	load_level(current_level_path)
+	
+	peer.set_bind_ip(server_address)
+	peer.create_server(server_port)
+	
+	multiplayer.set_multiplayer_peer(peer)
+	
+	peer.peer_connected.connect(_on_peer_connected)
+	peer.peer_disconnected.connect(_on_peer_disconnected)
+	
+	websocket_client = WebSocketPeer.new()
+	websocket_client.connect_to_url(\"wss://hookshot-matchmaker.fly.dev/server\")
+	
+	logger.announce(\"starting server at {0}:{1}\", [server_address, server_port])
+
+
+func _join_server() -> void:
+	var peer := ENetMultiplayerPeer.new()
+	var address := \"127.0.0.1\" if OS.is_debug_build() else \"66.51.127.219\"
+	peer.create_client(address, PORT)
+	multiplayer.set_multiplayer_peer(peer)
+
+
+func _on_peer_connected(new_peer_id: int) -> void:
+	await get_tree().create_timer(1).timeout
+	connect_player(new_peer_id)
+	
+	rpc(\"connect_player\", new_peer_id)
+	rpc_id(new_peer_id, \"load_level\", current_level_path)
+
+
+func _on_peer_disconnected(peer_id: int) -> void:
+	disconnect_player(peer_id)
+	current_game_mode.disconnect_player(peer_id)
+	
+	rpc(\"disconnect_player\", peer_id)
+
+
+func _add_player_character(peer_id: int, spawn_point: Vector3) -> Player:
+	logger.trace(\"adding player character {0}\", [peer_id])
+	
+	var client := connected_clients.get(peer_id) as ConnectedClient
+	if not client:
+		logger.warning(\"_add_player_character: no client\")
+		return
+	
+	if client.player:
+		_remove_player_character(peer_id)
+	
+	logger.trace(\"player name set to {0}\", [client.name])
+	
+	var player := preload(\"res://Scenes/Characters/Player/player.tscn\").instantiate() as Player
+	player.position = spawn_point
+	player.name = str(peer_id)
+	player.player_name = client.name
+	
+	player.set_multiplayer_authority(peer_id)
+	
+	client.player = player
+	
+	players.add_child(player)
+	
+	var me := multiplayer.get_unique_id()
+	if peer_id == me:
+		local_player = player
+		rpc(\"player_ready\", peer_id, spawn_point)
+	else:
+		# This is needed otherwise the `update_health` rpc calls will fail
+		player.make_visible_to(peer_id)
+		rpc_id(peer_id, \"force_visibility\", me)
+	
+	logger.trace(\"player added\")
+	
+	return player
+
+
+func _remove_player_character(peer_id: int) -> bool:
+	logger.trace(\"removing player character {0}\", [peer_id])
+	
+	var client := connected_clients.get(peer_id) as ConnectedClient
+	if not client:
+		logger.warn(\"_remove_player_character: no client\")
+		return false
+	
+	if not client.player:
+		return false
+	
+	# free is used here rather than queue_free to prevent node
+	# name collisions that break the sync logic
+	client.player.free()
+	client.player = null
+	
+	if peer_id == multiplayer.get_unique_id():
+		local_player = null
+
+	logger.trace(\"player removed\")
+	return true
+
+
+@rpc
+func connect_player(player_id: int, player_name: String = \"\") -> void:
+	var client := connected_clients.get(player_id) as ConnectedClient
+	if client:
+		logger.warn(\"connect_player: client was previously connected\")
+		_remove_player_character(player_id)
+		connected_clients.erase(player_id)
+	
+	var new_client := ConnectedClient.new()
+	if player_name:
+		new_client.name = player_name
+	
+	connected_clients[player_id] = new_client
+	logger.trace(\"player {0} connected\", [player_id])
+
+
+@rpc
+func disconnect_player(player_id: int) -> void:
+	var client := connected_clients.get(player_id) as ConnectedClient
+	if not client:
+		logger.warning(\"disconnect_player: no client\")
+		return
+		
+	connected_clients.erase(player_id)
+	if client.player:
+		client.player.queue_free()
+	
+	logger.trace(\"player {0} disconnected\", [player_id])
+
+
+@rpc
+func load_level(path: String) -> void:
+	logger.trace(\"loading level {0}\", [path])
+	remove_all_player_characters()
+	
+	if current_level:
+		current_level.queue_free()
+	
+	if current_game_mode:
+		current_game_mode.queue_free()
+		current_game_mode.disconnect(\"request_respawn\", _on_game_mode_request_respawn)
+		current_game_mode.disconnect(\"game_over\", _on_game_mode_game_over)
+		current_game_mode.disconnect(\"enable_player_weapons\", _on_game_mode_enable_player_weapons)
+		current_game_mode.disconnect(\"announce\", _on_game_mode_announce)
+	
+	var Level := load(path)
+	
+	current_level = Level.instantiate()
+	level_container.add_child(current_level)
+	
+	current_game_mode = load(\"res://Scenes/Game/rocket_arena_game_mode.tscn\").instantiate()
+	game_mode_container.add_child(current_game_mode)
+	
+	current_game_mode.connect(\"request_respawn\", _on_game_mode_request_respawn)
+	current_game_mode.connect(\"game_over\", _on_game_mode_game_over)
+	current_game_mode.connect(\"enable_player_weapons\", _on_game_mode_enable_player_weapons)
+	current_game_mode.connect(\"announce\", _on_game_mode_announce)
+	
+	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
+		rpc_id(get_multiplayer_authority(), \"level_loaded\")
+		rpc(\"set_player_name\", input_player_name)
+
+
+@rpc
+func remove_all_player_characters() -> void:
+	for player_id in connected_clients:
+		_remove_player_character(player_id)
+
+
+@rpc
+func respawn_player(player_id: int, spawn_point: Vector3) -> void:
+	_add_player_character(player_id, spawn_point)
+
+
+@rpc
+func add_previously_connected_player_character(other_player_id: int, spawn_point: Vector3) -> void:
+	_add_player_character(other_player_id, spawn_point)
+
+
+@rpc(call_local)
+func broadcast_chat(sender: int, timestamp: float, text: String) -> void:
+	var message := ChatMessage.new(sender, timestamp, text)
+	recent_chat_messages.append(message)
+	
+	var client = connected_clients.get(sender)
+	if client == null:
+		return
+	
+	var display_message := \"{0}: {1}\".format([client.name, text])
+	chat_panel.add_message(display_message)
+
+
+@rpc(any_peer)
+func level_loaded() -> void:
+	if not is_multiplayer_authority():
+		return
+	
+	var player_id := multiplayer.get_remote_sender_id()
+	
+	var client := connected_clients.get(player_id) as ConnectedClient
+	if not client:
+		return
+	
+	current_game_mode.register_player(player_id)
+	
+	for other_id in connected_clients:
+		if other_id == player_id:
+			continue
+		var other_client := connected_clients[other_id] as ConnectedClient
+		rpc_id(player_id, \"connect_player\", other_id, other_client.name)
+		if other_client.player:
+			rpc_id(player_id, \"add_previously_connected_player_character\", other_id, other_client.player.position)
+
+
+@rpc(any_peer)
+func player_ready(player_id: int, spawn_point: Vector3):
+	_add_player_character(player_id, spawn_point)
+
+
+@rpc(any_peer)
+func store_chat_message(text: String):
+	if not is_multiplayer_authority():
+		return
+	
+	var sender := multiplayer.get_remote_sender_id()
+	var timestamp := Time.get_unix_time_from_system()
+	
+	rpc(\"broadcast_chat\", sender, timestamp, text)
+
+
+@rpc(any_peer)
+func force_visibility(player_id: int) -> void:
+	logger.trace(\"forcing visibility to {0}\", [player_id])
+	
+	if local_player == null:
+		logger.warn(\"force_visibility: no local player\")
+		return
+	
+	local_player.make_visible_to(player_id)
+
+
+@rpc(any_peer, call_local)
+func set_player_name(name: String) -> void:
+	logger.trace(\"setting player name to {0}\", [name])
+	
+	var player_id := multiplayer.get_remote_sender_id()
+	var client = connected_clients.get(player_id)
+	if client:
+		client.name = name
+		if client.player:
+			client.player.set_player_name(name)
+
+
+@rpc(any_peer, call_local)
+func report_player_death(player_id: int, aggressor_id: int) -> void:
+	if multiplayer.get_remote_sender_id() != player_id:
+		return
+	
+	if not _remove_player_character(player_id):
+		return
+	
+	if is_multiplayer_authority():
+		current_game_mode.handle_player_death(player_id, aggressor_id)
+
+
+@rpc
+func announce(announcement: Announcer.Announcement) -> void:
+	announcer.announce(announcement)
+"
+
+[node name="MultiplayerServer" type="Node" groups=["Server"]]
+script = SubResource("GDScript_baplv")
+
+[node name="Logger" parent="." instance=ExtResource("3_jnv3a")]
+unique_name_in_owner = true
+label = "Server"
+
+[node name="LevelContainer" type="Node" parent="."]
+unique_name_in_owner = true
+
+[node name="GameModeContainer" type="Node" parent="."]
+unique_name_in_owner = true
+
+[node name="Players" type="Node" parent="."]
+unique_name_in_owner = true
+
+[node name="Menu" type="VBoxContainer" parent="." groups=["GameState"]]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -77.0
+offset_top = -91.0
+offset_right = 70.0
+offset_bottom = 75.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HostButton" type="Button" parent="Menu"]
+offset_right = 147.0
+offset_bottom = 31.0
+text = "Host"
+
+[node name="TextEdit" type="TextEdit" parent="Menu"]
+custom_minimum_size = Vector2(0, 40)
+offset_top = 35.0
+offset_right = 147.0
+offset_bottom = 75.0
+placeholder_text = "Name"
+
+[node name="JoinButton" type="Button" parent="Menu"]
+offset_top = 79.0
+offset_right = 147.0
+offset_bottom = 110.0
+text = "Join"
+
+[node name="ChatPanel" parent="." instance=ExtResource("4_u15rf")]
+unique_name_in_owner = true
+
+[node name="Announcer" parent="." instance=ExtResource("4_5rako")]
+unique_name_in_owner = true
+
+[node name="BackgroundMusic" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_s6e70")
+volume_db = -5.0
+
+[node name="MatchmakerPingTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+wait_time = 5.0
+
+[connection signal="pressed" from="Menu/HostButton" to="." method="_on_host_button_pressed"]
+[connection signal="text_changed" from="Menu/TextEdit" to="." method="_on_text_edit_text_changed"]
+[connection signal="pressed" from="Menu/JoinButton" to="." method="_on_join_button_pressed"]
+[connection signal="chat_focus_changed" from="ChatPanel" to="." method="_on_chat_panel_chat_focus_changed"]
+[connection signal="chat_message" from="ChatPanel" to="." method="_on_chat_panel_chat_message"]
+[connection signal="timeout" from="MatchmakerPingTimer" to="." method="_on_matchmaker_ping_timer_timeout"]

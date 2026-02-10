@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://bfhu4ed6reguj"]
+
+[ext_resource type="PackedScene" uid="uid://cbdq3e0ok46vp" path="res://Scenes/Weapons/Rifle/Models/Rifle.blend" id="1_skiug"]
+
+[node name="Rifle" instance=ExtResource("1_skiug")]
+
+[node name="v1" parent="." index="0"]
+transform = Transform3D(1.68697e-09, -0.0385935, -3.37395e-09, -0.0385935, -1.68697e-09, 0, -1.4748e-16, 3.37395e-09, -0.0385935, 0, 0.0212946, 0.0110732)

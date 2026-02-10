@@ -1,0 +1,48 @@
+# Local config (contains credentials/paths)
+config.py
+
+# Large displacement maps (JPG versions included)
+*.exr
+
+# Godot
+.godot/
+*.import
+
+# Exports
+Exports/
+
+# Steam SDK and deployment
+Steam/
+steamcmd.bat
+
+# Marketing (large video files)
+Marketing/*.mkv
+Marketing/*.mp4
+Marketing/*.m4v
+Marketing/*.prproj
+Marketing/Adobe Premiere Pro Auto-Save/
+Marketing/Adobe Premiere Pro Audio Previews/
+
+# Windows metadata
+*Zone.Identifier
+
+# Backups
+*.bak
+
+# Commercial fonts (not redistributable)
+Graphics/Fonts/Aviano Future Black Fast.otf
+Graphics/Fonts/Transat Text Black.otf
+Graphics/Fonts/Tinonium Black.otf
+
+# Pond5 licensed audio (not redistributable)
+Music/*.wav
+Music/*.ogg
+Music/*.mp3
+Sounds/Pond 5 Originals/*.wav
+Sounds/Pond 5 Originals/*.ogg
+Sounds/Music/*.wav
+Sounds/Music/*.ogg
+
+# OS files
+.DS_Store
+Thumbs.db

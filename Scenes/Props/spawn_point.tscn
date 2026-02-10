@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://dstd3rw3bnjel"]
+
+[ext_resource type="Script" path="res://Scenes/Props/SpawnPoint.gd" id="1_702pd"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_s1com"]
+radius = 5.0
+
+[node name="SpawnPoint" type="Area3D" groups=["SpawnPoints"]]
+collision_layer = 0
+script = ExtResource("1_702pd")
+
+[node name="CollisionShape3d" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_s1com")
+
+[connection signal="body_entered" from="." to="." method="_on_spawn_point_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_spawn_point_body_exited"]

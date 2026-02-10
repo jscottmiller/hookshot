@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3 uid="uid://ctn4xfhwm53wm"]
+
+[ext_resource type="PackedScene" uid="uid://clpts0xc56k5i" path="res://Scenes/Characters/SphereDrone/Models/sphere_drone.blend" id="1_5w48r"]
+
+[node name="SphereDroneModel" instance=ExtResource("1_5w48r")]

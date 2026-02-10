@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://ha6w24be4d5h"]
+
+[ext_resource type="Script" path="res://Scenes/Props/wall_run_track.gd" id="1_uceuj"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3s4hr"]
+size = Vector3(0.1, 1, 1)
+
+[node name="WallRunTrack" type="Area3D"]
+collision_layer = 8
+script = ExtResource("1_uceuj")
+
+[node name="CollisionShape3d" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_3s4hr")
+
+[connection signal="body_entered" from="." to="." method="_on_wall_run_track_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_wall_run_track_body_exited"]

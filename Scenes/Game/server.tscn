@@ -1,0 +1,24 @@
+[gd_scene load_steps=5 format=3 uid="uid://chsb4pgtd8sk1"]
+
+[ext_resource type="Script" path="res://Scenes/Game/server.gd" id="1_6xiab"]
+[ext_resource type="PackedScene" uid="uid://1q46uk4dxhsc" path="res://Scenes/Game/matchmaker_connection.tscn" id="1_yxyde"]
+[ext_resource type="PackedScene" uid="uid://006mb461a15" path="res://Util/logger.tscn" id="2_1uriv"]
+[ext_resource type="PackedScene" uid="uid://ctilu66bomfbu" path="res://Scenes/Game/network_game.tscn" id="3_rlh8t"]
+
+[node name="Root" type="Node"]
+script = ExtResource("1_6xiab")
+
+[node name="Logger" parent="." instance=ExtResource("2_1uriv")]
+unique_name_in_owner = true
+label = "Server"
+
+[node name="NetworkGame" parent="." instance=ExtResource("3_rlh8t")]
+unique_name_in_owner = true
+
+[node name="MatchmakerConnection" parent="." instance=ExtResource("1_yxyde")]
+unique_name_in_owner = true
+
+[connection signal="game_ended" from="NetworkGame" to="." method="_on_network_game_game_ended"]
+[connection signal="game_ready" from="NetworkGame" to="." method="_on_network_game_game_ready"]
+[connection signal="connected" from="MatchmakerConnection" to="." method="_on_matchmaker_connection_connected"]
+[connection signal="server_registered" from="MatchmakerConnection" to="." method="_on_matchmaker_connection_server_registered"]

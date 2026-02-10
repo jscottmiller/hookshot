@@ -1,0 +1,7 @@
+# Ignoring everything else
+*
+
+# Only allowing what we want
+!Exports/Linux/*
+!Server/*
+!Server/**/*

@@ -1,0 +1,23 @@
+[gd_scene load_steps=2 format=3 uid="uid://g6i457dq6y0e"]
+
+[sub_resource type="GDScript" id="GDScript_h4kin"]
+script/source = "class_name MultiAudioStreamPlayer3D extends AudioStreamPlayer3D
+
+
+func play_concurrent(from_position=0.0) -> void:
+	print(\"sound\")
+	if !playing:
+		play(from_position)
+		return
+
+	var asp := self.duplicate(DUPLICATE_USE_INSTANTIATION) as AudioStreamPlayer3D
+	get_parent().add_child(asp)
+	asp.stream = stream
+	asp.play()
+	await asp.finished
+	asp.queue_free()
+"
+
+[node name="MultiAudioStreamPlayer3D" type="AudioStreamPlayer3D"]
+unique_name_in_owner = true
+script = SubResource("GDScript_h4kin")

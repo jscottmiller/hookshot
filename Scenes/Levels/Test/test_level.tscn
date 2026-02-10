@@ -1,0 +1,139 @@
+[gd_scene load_steps=9 format=3 uid="uid://cyeyrd1470cqm"]
+
+[ext_resource type="Script" path="res://Scenes/Levels/Test/test_level.gd" id="1_3dobv"]
+[ext_resource type="PackedScene" uid="uid://cet6503q4rdld" path="res://Scenes/Architecture/floating_platform.tscn" id="2_lqhs6"]
+[ext_resource type="PackedScene" uid="uid://c306c20fuwgww" path="res://Scenes/Architecture/floating_wall_segment.tscn" id="3_pprm4"]
+[ext_resource type="PackedScene" uid="uid://dstd3rw3bnjel" path="res://Scenes/Props/spawn_point.tscn" id="4_u4cik"]
+[ext_resource type="PackedScene" uid="uid://dtdrfr52nspvi" path="res://Scenes/Props/player_detecting_camera.tscn" id="5_i5dul"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ecbor"]
+sky_top_color = Color(0.611765, 0.337255, 0.556863, 1)
+sky_horizon_color = Color(0.70098, 0.618627, 0.714706, 1)
+ground_bottom_color = Color(0.192157, 0.137255, 0.301961, 1)
+ground_horizon_color = Color(0.70098, 0.618627, 0.714706, 1)
+
+[sub_resource type="Sky" id="Sky_ew46f"]
+sky_material = SubResource("ProceduralSkyMaterial_ecbor")
+
+[sub_resource type="Environment" id="Environment_xo6uy"]
+background_mode = 2
+background_color = Color(0.254902, 0.290196, 0.662745, 1)
+background_energy_multiplier = 2.5
+sky = SubResource("Sky_ew46f")
+ambient_light_source = 1
+ambient_light_color = Color(0.513726, 0.729412, 0.980392, 1)
+tonemap_mode = 2
+glow_enabled = true
+glow_bloom = 0.01
+fog_enabled = true
+fog_light_color = Color(0.0313726, 0.054902, 0.164706, 1)
+volumetric_fog_density = 0.0314
+volumetric_fog_albedo = Color(0.482353, 0.290196, 0.294118, 1)
+
+[node name="TestLevel" type="Node3D"]
+script = ExtResource("1_3dobv")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_xo6uy")
+
+[node name="Lights" type="Node" parent="."]
+
+[node name="DirectionalLight3d" type="DirectionalLight3D" parent="Lights"]
+transform = Transform3D(0.928797, -3.71307e-07, 0.37059, -0.267562, 0.691904, 0.670582, -0.256413, -0.72199, 0.642638, 17.2356, 96.9273, 71.0242)
+light_color = Color(0.984314, 0.0980392, 0.278431, 1)
+light_energy = 0.5
+shadow_enabled = true
+directional_shadow_max_distance = 300.0
+directional_shadow_pancake_size = 300.0
+sky_mode = 1
+
+[node name="Architecture" type="Node" parent="."]
+
+[node name="FloatingPlatform1" parent="Architecture" instance=ExtResource("2_lqhs6")]
+
+[node name="FloatingPlatform7" parent="Architecture" instance=ExtResource("2_lqhs6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 79, 0)
+
+[node name="FloatingPlatform2" parent="Architecture" instance=ExtResource("2_lqhs6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -64, -0.0406952, -64.1805)
+
+[node name="FloatingPlatform3" parent="Architecture" instance=ExtResource("2_lqhs6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 62, -0.0407, -65.1805)
+
+[node name="FloatingPlatform4" parent="Architecture" instance=ExtResource("2_lqhs6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -64, -0.0406952, 64.8195)
+
+[node name="FloatingPlatform5" parent="Architecture" instance=ExtResource("2_lqhs6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64, -0.0407, 64.8195)
+
+[node name="FloatingPlatform6" parent="Architecture" instance=ExtResource("2_lqhs6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 44.9593, 142.82)
+
+[node name="FloatingPlatform8" parent="Architecture" instance=ExtResource("2_lqhs6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 44.9593, -143.18)
+
+[node name="FloatingWallSegment1" parent="Architecture" instance=ExtResource("3_pprm4")]
+transform = Transform3D(0.819151, 8.00037e-09, 1.03244, -3.21613e-09, 2.1, -3.68803e-09, -0.573576, -3.49311e-10, 1.47448, -44, 6, -25)
+
+[node name="FloatingWallSegment2" parent="Architecture" instance=ExtResource("3_pprm4")]
+transform = Transform3D(0.819151, -3.13954e-08, -1.03244, 1.37585e-08, 2.1, -1.15483e-08, 0.573576, -5.53584e-09, 1.47448, -42, 6, 29)
+
+[node name="FloatingWallSegment3" parent="Architecture" instance=ExtResource("3_pprm4")]
+transform = Transform3D(-0.766045, 3.13954e-08, 1.15702, 9.75803e-09, 2.1, -2.09326e-08, -0.642787, -5.53585e-09, -1.37889, 44, 6, -26)
+
+[node name="FloatingWallSegment4" parent="Architecture" instance=ExtResource("3_pprm4")]
+transform = Transform3D(-0.766043, 8.31935e-08, -1.15701, 7.0319e-08, 2.1, -3.99093e-08, 0.642787, -1.30588e-07, -1.37889, 39, 6, 29)
+
+[node name="SpawnPoints" type="Node" parent="."]
+unique_name_in_owner = true
+
+[node name="SpawnPoint1" parent="SpawnPoints" instance=ExtResource("4_u4cik")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1.05566, 0.29367)
+
+[node name="SpawnPoint2" parent="SpawnPoints" instance=ExtResource("4_u4cik")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -61, 1.05566, -71.7063)
+
+[node name="SpawnPoint3" parent="SpawnPoints" instance=ExtResource("4_u4cik")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67, 1.05566, -71.7063)
+
+[node name="SpawnPoint4" parent="SpawnPoints" instance=ExtResource("4_u4cik")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 71, 1.05566, 71.2937)
+
+[node name="SpawnPoint5" parent="SpawnPoints" instance=ExtResource("4_u4cik")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -67, 1.05566, 73.2937)
+
+[node name="SpawnPoint6" parent="SpawnPoints" instance=ExtResource("4_u4cik")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 47.0557, 149.294)
+
+[node name="SpawnPoint7" parent="SpawnPoints" instance=ExtResource("4_u4cik")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 47.0557, -146.706)
+
+[node name="Cameras" type="Node" parent="."]
+unique_name_in_owner = true
+
+[node name="PlayerDetectingCamera1" parent="Cameras" instance=ExtResource("5_i5dul")]
+transform = Transform3D(0.482963, -0.258819, 0.836516, 0.12941, 0.965926, 0.224144, -0.866025, 5.16191e-07, 0.5, 83, 14, 84)
+
+[node name="PlayerDetectingCamera2" parent="Cameras" instance=ExtResource("5_i5dul")]
+transform = Transform3D(-0.5, 3.78551e-08, -0.866026, 7.57103e-08, 1, 3.55271e-14, 0.866026, -6.5567e-08, -0.5, -85, 6, -76)
+
+[node name="PlayerDetectingCamera3" parent="Cameras" instance=ExtResource("5_i5dul")]
+transform = Transform3D(-0.513541, -0.429033, 0.743106, 0, 0.866025, 0.500001, -0.858065, 0.256771, -0.444739, 81, 7, -76)
+
+[node name="PlayerDetectingCamera4" parent="Cameras" instance=ExtResource("5_i5dul")]
+transform = Transform3D(-0.999877, 0.00785358, -0.0136027, 1.68694e-08, 0.866025, 0.500001, 0.0157071, 0.499939, -0.865918, 1, 58, -165)
+
+[node name="PlayerDetectingCamera6" parent="Cameras" instance=ExtResource("5_i5dul")]
+transform = Transform3D(0.999877, -0.00785354, 0.0136027, 1.50307e-08, 0.866025, 0.500001, -0.015707, -0.499939, 0.865918, 1, 61, 166)
+
+[node name="PlayerDetectingCamera5" parent="Cameras" instance=ExtResource("5_i5dul")]
+transform = Transform3D(0.776046, 0.315338, -0.546182, 8.38066e-08, 0.866026, 0.499999, 0.630676, -0.388023, 0.672076, -77, 7, 79)
+
+[node name="CameraTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+autostart = true
+
+[node name="Players" type="Node" parent="."]
+unique_name_in_owner = true
+
+[connection signal="timeout" from="CameraTimer" to="." method="_on_camera_timer_timeout"]

@@ -1,0 +1,31 @@
+[gd_scene load_steps=3 format=3 uid="uid://b0kbu867xk8ta"]
+
+[ext_resource type="PackedScene" uid="uid://ctilu66bomfbu" path="res://Scenes/Game/network_game.tscn" id="1_qawng"]
+[ext_resource type="Script" path="res://Scenes/Game/debug.gd" id="1_uushy"]
+
+[node name="Debug" type="Node"]
+script = ExtResource("1_uushy")
+
+[node name="UI" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+offset_right = 211.0
+offset_bottom = 84.0
+
+[node name="HostButton" type="Button" parent="UI"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Host
+"
+
+[node name="JoinButton" type="Button" parent="UI"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Join"
+
+[node name="NetworkGame" parent="." instance=ExtResource("1_qawng")]
+unique_name_in_owner = true
+
+[connection signal="pressed" from="UI/HostButton" to="." method="_on_host_button_pressed"]
+[connection signal="pressed" from="UI/JoinButton" to="." method="_on_join_button_pressed"]
+[connection signal="game_ended" from="NetworkGame" to="." method="_on_network_game_game_ended"]
+[connection signal="game_ready" from="NetworkGame" to="." method="_on_network_game_game_ready"]

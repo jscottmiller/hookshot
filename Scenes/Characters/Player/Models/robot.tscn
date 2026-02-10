@@ -1,0 +1,24 @@
+[gd_scene load_steps=2 format=3 uid="uid://dqqdyuy51hacy"]
+
+[ext_resource type="PackedScene" uid="uid://dds38fxs8t7nm" path="res://Scenes/Characters/Player/Models/Robot.blend" id="1_s0dgr"]
+
+[node name="Robot" instance=ExtResource("1_s0dgr")]
+
+[node name="Skeleton3D" parent="Armature" index="0"]
+bones/0/position = Vector3(0.0105481, 0.93908, 0.0170171)
+bones/0/rotation = Quaternion(0.528693, 1.22572e-16, -6.05571e-17, 0.848813)
+bones/1/rotation = Quaternion(-0.976304, 0.160397, -0.0036773, 0.145221)
+bones/2/rotation = Quaternion(0.0753731, -0.0321358, -0.0360012, 0.995987)
+bones/4/rotation = Quaternion(-0.672994, -0.212414, 0.68007, 0.198656)
+bones/6/rotation = Quaternion(-0.170846, -7.37539e-17, -4.13383e-17, 0.985298)
+bones/7/rotation = Quaternion(-0.669207, 0.19071, -0.704968, 0.137157)
+bones/9/rotation = Quaternion(-0.911976, -0.24311, -0.0412356, 0.327867)
+bones/10/rotation = Quaternion(0.000289204, 0.036134, 0.173541, 0.984163)
+bones/12/position = Vector3(-0.153961, 1.09203, -1.42584)
+bones/12/rotation = Quaternion(0.722998, 1.6061e-16, 1.52967e-16, -0.69085)
+bones/13/position = Vector3(-0.173679, 1.44738, -0.567933)
+bones/13/rotation = Quaternion(-0.166784, -0.0019737, -0.00138104, 0.985991)
+bones/14/position = Vector3(0.0840057, 0.927673, -1.52866)
+bones/14/rotation = Quaternion(0.720507, 1.60637e-16, 1.52992e-16, -0.693447)
+bones/15/position = Vector3(0.17375, 1.36232, -0.559713)
+bones/15/rotation = Quaternion(-0.17212, 0.00195688, 0.00137476, 0.985073)

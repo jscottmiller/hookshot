@@ -1,0 +1,32 @@
+[gd_scene load_steps=2 format=3 uid="uid://dqyyyulekt45c"]
+
+[ext_resource type="Script" path="res://Scenes/Game/chat_panel.gd" id="1_i7l6d"]
+
+[node name="ChatPanel" type="Control"]
+layout_mode = 3
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -125.0
+offset_right = 300.0
+offset_bottom = 125.0
+grow_vertical = 2
+script = ExtResource("1_i7l6d")
+
+[node name="MessageHistory" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0.537255)
+offset_right = 300.0
+offset_bottom = 200.0
+grow_vertical = 2
+size_flags_horizontal = 3
+
+[node name="MessageInput" type="TextEdit" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+offset_top = 200.0
+offset_right = 300.0
+offset_bottom = 236.0
+size_flags_vertical = 8
+mouse_filter = 2
+placeholder_text = "Message"

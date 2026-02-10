@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3 uid="uid://ctilu66bomfbu"]
+
+[ext_resource type="Script" path="res://Scenes/Game/network_game.gd" id="1_5hoyk"]
+[ext_resource type="PackedScene" uid="uid://006mb461a15" path="res://Util/logger.tscn" id="2_1jtn8"]
+[ext_resource type="PackedScene" uid="uid://dqyyyulekt45c" path="res://Scenes/Game/chat_panel.tscn" id="3_5v38u"]
+[ext_resource type="PackedScene" uid="uid://bld1ka3hplunx" path="res://Scenes/UI/announcer.tscn" id="4_2p24l"]
+
+[node name="NetworkGame" type="Node" groups=["Game"]]
+script = ExtResource("1_5hoyk")
+
+[node name="Logger" parent="." instance=ExtResource("2_1jtn8")]
+unique_name_in_owner = true
+label = "NetworkGame"
+
+[node name="LevelContainer" type="Node" parent="."]
+unique_name_in_owner = true
+
+[node name="GameModeContainer" type="Node" parent="."]
+unique_name_in_owner = true
+
+[node name="Players" type="Node" parent="."]
+unique_name_in_owner = true
+
+[node name="ChatPanel" parent="." instance=ExtResource("3_5v38u")]
+unique_name_in_owner = true
+visible = false
+
+[node name="Announcer" parent="." instance=ExtResource("4_2p24l")]
+unique_name_in_owner = true
+
+[connection signal="chat_focus_changed" from="ChatPanel" to="." method="_on_chat_panel_chat_focus_changed"]
+[connection signal="chat_message" from="ChatPanel" to="." method="_on_chat_panel_chat_message"]

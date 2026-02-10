@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3 uid="uid://2v0isnvkrec8"]
+
+[ext_resource type="PackedScene" uid="uid://dstmhi1ce104u" path="res://Scenes/Weapons/Launcher/Models/Rocket.blend" id="1_1fboa"]
+
+[node name="RocketModel" instance=ExtResource("1_1fboa")]

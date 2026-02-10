@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://c2qn4l2qpows0"]
+
+[ext_resource type="Script" path="res://Scenes/Sound/music_manager.gd" id="1_fbbnf"]
+[ext_resource type="AudioStream" uid="uid://lqbbvvwy0dep" path="res://Sounds/Music/145217130-energy-cyberpunk-loop.wav" id="2_vdb4m"]
+[ext_resource type="AudioStream" uid="uid://d26dgbp7tatxf" path="res://Sounds/Music/145284042-energetic-underground-techno-l.wav" id="3_ni6pf"]
+
+[node name="MusicManager" type="Node"]
+script = ExtResource("1_fbbnf")
+
+[node name="Tracks" type="Node" parent="."]
+unique_name_in_owner = true
+
+[node name="EnergyCyberpunkLoop" type="AudioStreamPlayer" parent="Tracks"]
+stream = ExtResource("2_vdb4m")
+
+[node name="EnergeticUndergroundTechnoLoop" type="AudioStreamPlayer" parent="Tracks"]
+stream = ExtResource("3_ni6pf")

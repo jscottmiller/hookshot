@@ -1,0 +1,82 @@
+[gd_scene load_steps=2 format=3 uid="uid://bbhfh8s704eiq"]
+
+[ext_resource type="Script" path="res://Scenes/Game/scoreboard.gd" id="1_seev0"]
+
+[node name="Scoreboard" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_seev0")
+
+[node name="GridContainer" type="GridContainer" parent="."]
+unique_name_in_owner = true
+offset_right = 40.0
+offset_bottom = 40.0
+columns = 3
+
+[node name="Label" type="Label" parent="GridContainer"]
+offset_right = 98.0
+offset_bottom = 26.0
+text = "Player
+"
+
+[node name="Label2" type="Label" parent="GridContainer"]
+offset_left = 102.0
+offset_right = 134.0
+offset_bottom = 26.0
+text = "Kills"
+horizontal_alignment = 2
+
+[node name="Label3" type="Label" parent="GridContainer"]
+offset_left = 138.0
+offset_right = 193.0
+offset_bottom = 26.0
+text = "Deaths"
+horizontal_alignment = 2
+
+[node name="Label4" type="Label" parent="GridContainer"]
+offset_top = 30.0
+offset_right = 98.0
+offset_bottom = 56.0
+text = "cowboyscott"
+
+[node name="Label5" type="Label" parent="GridContainer"]
+offset_left = 102.0
+offset_top = 30.0
+offset_right = 134.0
+offset_bottom = 56.0
+text = "1"
+horizontal_alignment = 2
+
+[node name="Label6" type="Label" parent="GridContainer"]
+offset_left = 138.0
+offset_top = 30.0
+offset_right = 193.0
+offset_bottom = 56.0
+text = "5"
+horizontal_alignment = 2
+
+[node name="Label7" type="Label" parent="GridContainer"]
+offset_top = 60.0
+offset_right = 98.0
+offset_bottom = 86.0
+text = "pgibbons"
+
+[node name="Label8" type="Label" parent="GridContainer"]
+offset_left = 102.0
+offset_top = 60.0
+offset_right = 134.0
+offset_bottom = 86.0
+text = "10"
+horizontal_alignment = 2
+
+[node name="Label9" type="Label" parent="GridContainer"]
+offset_left = 138.0
+offset_top = 60.0
+offset_right = 193.0
+offset_bottom = 86.0
+text = "3"
+horizontal_alignment = 2

@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3 uid="uid://c306c20fuwgww"]
+
+[ext_resource type="PackedScene" uid="uid://ha6w24be4d5h" path="res://Scenes/Props/wall_run_track.tscn" id="1_8wji6"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_cj3vb"]
+size = Vector3(0.05, 2, 4)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_udcen"]
+points = PackedVector3Array(-0.025, -1, -2, 0.025, -1, -2, -0.025, -1, 2, -0.025, 1, -2, 0.025, 1, -2, 0.025, -1, 2, -0.025, 1, 2, 0.025, 1, 2)
+
+[node name="FloatingWallSegment" type="Node3D"]
+metadata/_edit_group_ = true
+
+[node name="WallArea3d" type="StaticBody3D" parent="."]
+collision_layer = 6
+
+[node name="MeshInstance3d" type="MeshInstance3D" parent="WallArea3d"]
+mesh = SubResource("BoxMesh_cj3vb")
+
+[node name="CollisionShape3d" type="CollisionShape3D" parent="WallArea3d"]
+shape = SubResource("ConvexPolygonShape3D_udcen")
+
+[node name="WallRunTrack" parent="." instance=ExtResource("1_8wji6")]
+transform = Transform3D(1, 0, 0, 0, 1.67377, 0, 0, 0, 3.77908, 0.0658364, 0, 0)

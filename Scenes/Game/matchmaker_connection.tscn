@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3 uid="uid://1q46uk4dxhsc"]
+
+[ext_resource type="Script" path="res://Scenes/Game/matchmaker_connection.gd" id="1_eslay"]
+[ext_resource type="Script" path="res://Util/logger.gd" id="2_1td47"]
+
+[node name="MatchmakerConnection" type="Node"]
+script = ExtResource("1_eslay")
+
+[node name="Logger" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("2_1td47")
+label = "Matchmaker"
+
+[node name="PingTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+
+[node name="ReconnectTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+wait_time = 5.0
+one_shot = true
+
+[connection signal="timeout" from="PingTimer" to="." method="_on_ping_timer_timeout"]
+[connection signal="timeout" from="ReconnectTimer" to="." method="_on_reconnect_timer_timeout"]

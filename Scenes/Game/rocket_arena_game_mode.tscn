@@ -1,0 +1,236 @@
+[gd_scene load_steps=31 format=3 uid="uid://dxhdow3r0ab6q"]
+
+[ext_resource type="Script" path="res://Scenes/Game/rocket_arena_game_mode.gd" id="1_n2eg2"]
+[ext_resource type="PackedScene" uid="uid://006mb461a15" path="res://Util/logger.tscn" id="2_yfhsc"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_vb6lk"]
+properties/0/path = NodePath(".:player_info")
+properties/0/spawn = true
+properties/0/sync = true
+properties/0/watch = false
+properties/1/path = NodePath(".:red_wins")
+properties/1/spawn = true
+properties/1/sync = true
+properties/1/watch = false
+properties/2/path = NodePath(".:blue_wins")
+properties/2/spawn = true
+properties/2/sync = true
+properties/2/watch = false
+
+[sub_resource type="Animation" id="Animation_tox7r"]
+resource_name = "GameComplete"
+length = 5.0
+step = 1.0
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(5),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"_end_game"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_s1r5g"]
+resource_name = "Intro"
+length = 6.0
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"_intro"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_n60wx"]
+resource_name = "MinimumPlayersMet"
+length = 10.0
+step = 1.0
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(),
+"transitions": PackedFloat32Array(),
+"values": []
+}
+
+[sub_resource type="Animation" id="Animation_7qgj0"]
+resource_name = "RoundComplete"
+length = 5.0
+step = 1.0
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(),
+"transitions": PackedFloat32Array(),
+"values": []
+}
+
+[sub_resource type="Animation" id="Animation_74ml6"]
+resource_name = "RoundInProgress"
+length = 300.0
+step = 1.0
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(300),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"_end_round"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_1t7q2"]
+resource_name = "WaitingForPlayers"
+
+[sub_resource type="Animation" id="Animation_rbb06"]
+resource_name = "WaitingForRoundToStart"
+length = 5.0
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 5),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [],
+"method": &"_start_round_countdown"
+}, {
+"args": [],
+"method": &"_start_round"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_j2fsb"]
+_data = {
+"GameComplete": SubResource("Animation_tox7r"),
+"Intro": SubResource("Animation_s1r5g"),
+"MinimumPlayersMet": SubResource("Animation_n60wx"),
+"RoundComplete": SubResource("Animation_7qgj0"),
+"RoundInProgress": SubResource("Animation_74ml6"),
+"WaitingForPlayers": SubResource("Animation_1t7q2"),
+"WaitingForRoundToStart": SubResource("Animation_rbb06")
+}
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_lb6c5"]
+animation = &"GameComplete"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_bwo3f"]
+animation = &"Intro"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_1y336"]
+animation = &"MinimumPlayersMet"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_5h30f"]
+animation = &"RoundComplete"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_y6vnm"]
+animation = &"RoundInProgress"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_0vcnf"]
+animation = &"WaitingForPlayers"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_nf25b"]
+animation = &"WaitingForRoundToStart"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_ojybs"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_mifdo"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_ao6yr"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_6w4uj"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_6ebf1"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_oepae"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_4ms0m"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_40fae"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_khnfb"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_depyo"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_5oota"]
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_jfvnl"]
+states/End/position = Vector2(1441, 285)
+states/GameComplete/node = SubResource("AnimationNodeAnimation_lb6c5")
+states/GameComplete/position = Vector2(1277, 285)
+states/Intro/node = SubResource("AnimationNodeAnimation_bwo3f")
+states/Intro/position = Vector2(567, 423)
+states/MinimumPlayersMet/node = SubResource("AnimationNodeAnimation_1y336")
+states/MinimumPlayersMet/position = Vector2(567, 285)
+states/RoundComplete/node = SubResource("AnimationNodeAnimation_5h30f")
+states/RoundComplete/position = Vector2(1066, 423)
+states/RoundInProgress/node = SubResource("AnimationNodeAnimation_y6vnm")
+states/RoundInProgress/position = Vector2(1066, 285)
+states/Start/position = Vector2(132, 285)
+states/WaitingForPlayers/node = SubResource("AnimationNodeAnimation_0vcnf")
+states/WaitingForPlayers/position = Vector2(319, 285)
+states/WaitingForRoundToStart/node = SubResource("AnimationNodeAnimation_nf25b")
+states/WaitingForRoundToStart/position = Vector2(822, 285)
+transitions = ["Start", "WaitingForPlayers", SubResource("AnimationNodeStateMachineTransition_ojybs"), "Intro", "WaitingForRoundToStart", SubResource("AnimationNodeStateMachineTransition_mifdo"), "WaitingForRoundToStart", "RoundInProgress", SubResource("AnimationNodeStateMachineTransition_ao6yr"), "RoundInProgress", "RoundComplete", SubResource("AnimationNodeStateMachineTransition_6w4uj"), "RoundComplete", "WaitingForRoundToStart", SubResource("AnimationNodeStateMachineTransition_6ebf1"), "GameComplete", "End", SubResource("AnimationNodeStateMachineTransition_oepae"), "WaitingForPlayers", "MinimumPlayersMet", SubResource("AnimationNodeStateMachineTransition_4ms0m"), "MinimumPlayersMet", "Intro", SubResource("AnimationNodeStateMachineTransition_40fae"), "MinimumPlayersMet", "WaitingForPlayers", SubResource("AnimationNodeStateMachineTransition_khnfb"), "RoundInProgress", "GameComplete", SubResource("AnimationNodeStateMachineTransition_depyo"), "WaitingForPlayers", "Intro", SubResource("AnimationNodeStateMachineTransition_5oota")]
+graph_offset = Vector2(-143, 202)
+
+[node name="RocketArenaGameMode" type="Node"]
+script = ExtResource("1_n2eg2")
+
+[node name="Logger" parent="." instance=ExtResource("2_yfhsc")]
+unique_name_in_owner = true
+label = "RocketArena"
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+unique_name_in_owner = true
+replication_config = SubResource("SceneReplicationConfig_vb6lk")
+public_visibility = false
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_j2fsb")
+}
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+unique_name_in_owner = true
+tree_root = SubResource("AnimationNodeStateMachine_jfvnl")
+anim_player = NodePath("../AnimationPlayer")
+active = true

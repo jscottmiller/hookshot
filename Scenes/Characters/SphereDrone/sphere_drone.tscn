@@ -1,0 +1,54 @@
+[gd_scene load_steps=6 format=3 uid="uid://clhy2h1hkacuh"]
+
+[ext_resource type="Script" path="res://Scenes/Characters/SphereDrone/sphere_drone.gd" id="1_3aiy2"]
+[ext_resource type="PackedScene" uid="uid://006mb461a15" path="res://Util/logger.tscn" id="2_6bvr5"]
+[ext_resource type="PackedScene" uid="uid://ctn4xfhwm53wm" path="res://Scenes/Characters/SphereDrone/Models/sphere_drone.tscn" id="2_txwun"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_4kekm"]
+properties/0/path = NodePath(".:sync_position")
+properties/0/spawn = true
+properties/0/sync = true
+properties/0/watch = false
+properties/1/path = NodePath(".:sync_rotation")
+properties/1/spawn = true
+properties/1/sync = true
+properties/1/watch = false
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_aa2qk"]
+
+[node name="SphereDrone" type="CharacterBody3D"]
+collision_layer = 128
+collision_mask = 0
+script = ExtResource("1_3aiy2")
+
+[node name="Logger" parent="." instance=ExtResource("2_6bvr5")]
+unique_name_in_owner = true
+label = "SphereDrone"
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+unique_name_in_owner = true
+replication_config = SubResource("SceneReplicationConfig_4kekm")
+visibility_update_mode = 2
+public_visibility = false
+
+[node name="SphereDroneModel" parent="." instance=ExtResource("2_txwun")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1.51016, 0, 0, 0, 1.51016, 0, 0, 0, 1.51016, 0, 0, 0)
+shape = SubResource("SphereShape3D_aa2qk")
+
+[node name="ObservationCast3D" type="RayCast3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -0.623231)
+target_position = Vector3(0, 0, 15)
+collision_mask = 67
+collide_with_areas = true
+debug_shape_custom_color = Color(0.85098, 0.92549, 0, 1)
+debug_shape_thickness = 5
+
+[node name="ObservationTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+wait_time = 0.5
+autostart = true
+
+[connection signal="timeout" from="ObservationTimer" to="." method="_on_observation_timer_timeout"]
