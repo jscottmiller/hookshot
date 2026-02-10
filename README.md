@@ -2,6 +2,8 @@
 
 An arena shooter with grappling hooks, built for the 7 Day FPS game jam.
 
+[![Gameplay Video](https://img.youtube.com/vi/4j5r8jB4v0E/maxresdefault.jpg)](https://www.youtube.com/watch?v=4j5r8jB4v0E)
+
 ## About
 
 Hookshot is a fast-paced multiplayer FPS where movement is king. Grapple across arenas, blast your opponents with rockets, and try not to fall into the void.
